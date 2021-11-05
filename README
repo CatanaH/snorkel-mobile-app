@@ -1,3 +1,7 @@
-run with 'yarn start' or 'npm start'
+Running on Mobile:
+    install 'expo go' mobile app on a mobile device.
+    make sure your mobile device is connected to the same network as your server.
+    run server with 'yarn start' or 'npm start'
+    once expo server starts, scan the QR code from your mobile device.
 
 Meant to work in tandem with backend server, but for now will just hold dummy-data.
