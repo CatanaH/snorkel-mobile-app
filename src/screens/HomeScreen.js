@@ -1,8 +1,5 @@
-// import 'react-native-gesture-handler';
-import React, {useEffect} from 'react';
-// import { Button, View, Text, ScrollView, StatusBar, SafeAreaView} from 'react-native';
+import React from 'react';
 import { Text, View } from 'react-native';
-// import styles from '../styles/styles'
 
 const HomeScreen = () => {
 
