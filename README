@@ -1,3 +1,6 @@
+Running 'npm install' should install required dependecies including Expo. 
+Otherwise install Expo globally first.
+
 Running on Mobile:
     install 'expo go' mobile app on a mobile device.
     make sure your mobile device is connected to the same network as your server.
