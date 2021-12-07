@@ -1,12 +1,20 @@
-import React, { Component } from 'react';
-import { Button, ImageBackground, View, Text, SafeAreaView } from 'react-native';
+import React from 'react';
+import { ImageBackground, View, Text, Pressable, Button } from 'react-native';
 import { StyleSheet } from "react-native";
 import { MaterialIcons, Entypo, Feather,AntDesign } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
+import { AirbnbRating } from 'react-native-ratings';
+
+import DifficultyTag from '../components/DifficultyTag'
+import BeachInfo from '../components/BeachInfo';
 
 
 const image = { uri: "https://media.nationalgeographic.org/assets/photos/000/267/26734.jpg" };
-const BackImage = (props) => {
+const BackImage = () => {
+
+    const btnPress = () => {
+        console.log('btn pressed');
+    }
+
     return(
     <View style={styles.backImage}>
         <ImageBackground source={image} resizeMode="cover" style={styles.image} imageStyle={{ opacity: 0.5 }}>
@@ -18,43 +26,38 @@ const BackImage = (props) => {
                     </View>
                 </View>
                 <View>
-                    {/* rating Component */}
                     <View style={styles.starView}>
-                        {/* <View>
-                            <Text>Easy</Text>
-                        </View> */}
-                        <FontAwesome name="star" size={24} color="yellow" style={styles.stars}/>
-                        <FontAwesome name="star" size={24} color="yellow" style={styles.stars}/>
-                        <FontAwesome name="star" size={24} color="yellow" style={styles.stars}/>
-                        <FontAwesome name="star" size={24} color="yellow" style={styles.stars}/>
-                        <FontAwesome name="star" size={24} color="yellow" style={styles.stars}/>
+                        <DifficultyTag difficulty='advanced'/>
+                        <AirbnbRating
+                            count={5}
+                            defaultRating={5}
+                            showRating={false}
+                            isDisabled={true}
+                            size={20}
+                        />
                     </View>
                 </View>
                 <Text style={styles.beachLocation}>Santa Cruz, California</Text>
             </View>
         </ImageBackground>
         <View style={styles.btnMenu}>
-            <View style={styles.btnGroup}>
-                <View style={styles.btn}>
-                    {/* make btn a pressable obj, Touchable Highlight */}
-                    <Entypo name="map" size={24} color="deepskyblue" style={styles.btnIcon}/>
-                </View>
-                <Text>Entry Map</Text>
-            </View>
+                <Pressable onPress={btnPress} style={styles.btnGroup}>
+                    <View style={styles.btn}>
+                        <Entypo name="map" size={24} color="deepskyblue" style={styles.btnIcon}/>
+                    </View>
+                </Pressable>
 
-            <View style={styles.btnGroup}>
-                <View style={styles.btn}>
-                    <Feather name="map-pin" size={24} color="deepskyblue" style={styles.btnIcon}/>
-                </View>
-                <Text>Directions</Text>
-            </View>
+                <Pressable onPress={btnPress}  style={styles.btnGroup}>
+                    <View style={styles.btn}>
+                        <Feather name="map-pin" size={24} color="deepskyblue" style={styles.btnIcon}/>
+                    </View>
+                </Pressable>
 
-            <View style={styles.btnGroup}>
-                <View style={styles.btn}>
-                    <Entypo name="map" size={24} color="deepskyblue" style={styles.btnIcon}/>
-                </View>
-                <Text>Photos</Text>
-            </View>
+                <Pressable onPress={btnPress} style={styles.btnGroup}>
+                    <View style={styles.btn}>
+                        <Entypo name="map" size={24} color="deepskyblue" style={styles.btnIcon}/>
+                    </View>
+                </Pressable>
 
         </View>
     </View>
@@ -62,11 +65,68 @@ const BackImage = (props) => {
 
 }
 
-const BeachScreen = () => {
+const ActivityType = () => {
+    let activityType = 'Diving' 
+    // if (props.ActivityType == 'snorkel') {
+    //     activityType = 'Snorkel'
+    // } else if (props.ActivityType == 'Freediving') {
+    //     activityType = 'Freediving'
+    // }
+    return activityType;
+}
+
+const ReviewSpotBtn = ({navigation=navigation}) => {
+
+    return (
+        <Button
+            title='Log a Dive'
+            onPress={() => {
+                navigation.navigate('ReviewSpot');
+            }}
+        />
+    )
+}
+
+const ReviewSummary = ({navigation=navigation}) => {
+    //avg rating(maybe move to here from backImage)
+
+    return(
+        <>
+            <Text>86 reviews</Text>
+            <Button
+                title='see all reviews'
+                onPress={() => {
+                    navigation.navigate('AllReviews')
+                }}
+            />
+        </>
+    )
+}
+
+const TideSurf = ({navigation=navigation}) => {
+    //small preview, with btn to full screen report
     return (
         <>
-        <BackImage/>
-        {/* <Text style={styles.container}>Test Text</Text> */}
+            <Text>Low Tide is at 06:30 and 19:10 today</Text>
+            <Text>surf is calm, lets go diving!</Text>
+            <Button
+                title='view surf report'
+                onPress={()=>{navigation.navigate('TideSurfDetails')}}
+            />
+        </>
+    )
+}
+
+const BeachScreen = ({navigation}) => {
+    return (
+        <>
+            <BackImage/>
+            <ActivityType/>
+            <ReviewSpotBtn navigation={navigation}/>
+            <ReviewSummary navigation={navigation}/>
+            <TideSurf navigation={navigation}/>
+            <BeachInfo/>
+            
         </>
 
     )
@@ -87,6 +147,9 @@ const styles = StyleSheet.create({
     detailsContainer: {
 
     },
+    // BeachInfo: {
+    //     paddingTop: 30
+    // },
 
     image: {
       flex: 0.85,
