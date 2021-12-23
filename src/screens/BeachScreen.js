@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { ImageBackground, View, Text, Pressable, Button } from 'react-native';
 import { StyleSheet } from "react-native";
 import { MaterialIcons, Entypo, Feather,AntDesign } from '@expo/vector-icons';
@@ -7,10 +8,12 @@ import { AirbnbRating } from 'react-native-ratings';
 import DifficultyTag from '../components/DifficultyTag'
 import BeachInfo from '../components/BeachInfo';
 
-
 const image = { uri: "https://media.nationalgeographic.org/assets/photos/000/267/26734.jpg" };
-const BackImage = () => {
 
+export const rootDomain = 'http://localhost:5000';
+
+
+const BackImage = ({beachData}) => {
     const btnPress = () => {
         console.log('btn pressed');
     }
@@ -20,16 +23,16 @@ const BackImage = () => {
         <ImageBackground source={image} resizeMode="cover" style={styles.image} imageStyle={{ opacity: 0.5 }}>
             <View className={styles.detailsContainer}>
                 <View style={styles.pageHeroInfo}>
-                    <Text style={styles.pageTitle}>BeachName</Text>
+                    <Text style={styles.pageTitle}>{beachData.name}</Text>
                     <View style={styles.favorites}>
                        <MaterialIcons name="favorite-outline" size={30} color="white" />
                     </View>
                 </View>
                 <View>
                     <View style={styles.starView}>
-                        <DifficultyTag difficulty='advanced'/>
+                        <DifficultyTag difficulty={beachData.difficulty}/>
                         <AirbnbRating
-                            count={5}
+                            count={beachData.rating}
                             defaultRating={5}
                             showRating={false}
                             isDisabled={true}
@@ -37,7 +40,7 @@ const BackImage = () => {
                         />
                     </View>
                 </View>
-                <Text style={styles.beachLocation}>Santa Cruz, California</Text>
+                <Text style={styles.beachLocation}>{beachData.location_city}</Text>
             </View>
         </ImageBackground>
         <View style={styles.btnMenu}>
@@ -72,7 +75,11 @@ const ActivityType = () => {
     // } else if (props.ActivityType == 'Freediving') {
     //     activityType = 'Freediving'
     // }
-    return activityType;
+    return (
+        <Text>
+            {activityType}
+        </Text>
+    )
 }
 
 const ReviewSpotBtn = ({navigation=navigation}) => {
@@ -87,12 +94,13 @@ const ReviewSpotBtn = ({navigation=navigation}) => {
     )
 }
 
-const ReviewSummary = ({navigation=navigation}) => {
+const ReviewSummary = ({beachData, navigation=navigation}) => {
+    
     //avg rating(maybe move to here from backImage)
-
+    
     return(
         <>
-            <Text>86 reviews</Text>
+            <Text>{beachData.num_reviews} reviews</Text>
             <Button
                 title='see all reviews'
                 onPress={() => {
@@ -118,17 +126,41 @@ const TideSurf = ({navigation=navigation}) => {
 }
 
 const BeachScreen = ({navigation}) => {
+    const [beachData, setBeachData] = useState({});
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        getBeachData()
+    }, []);
+
+    async function getBeachData() {
+        const beachid = 14;
+        const res = await fetch(`${rootDomain}/spots/get?beach_id=${beachid}`, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+        if (res.status != 200) {
+            console.log('error: ', res.status)
+        }
+
+        const beach_data = await res.json()
+        setBeachData(beach_data.data);
+
+    }
+
     return (
         <>
-            <BackImage/>
-            <ActivityType/>
-            <ReviewSpotBtn navigation={navigation}/>
-            <ReviewSummary navigation={navigation}/>
-            <TideSurf navigation={navigation}/>
-            <BeachInfo/>
-            
+            {
+                !!Object.keys(beachData).length && 
+                <>
+                    <BackImage beachData={beachData}/>
+                    <ActivityType/>
+                    <ReviewSpotBtn navigation={navigation}/>
+                    <ReviewSummary navigation={navigation} beachData={beachData}/>
+                    <TideSurf navigation={navigation}/>
+                    <BeachInfo/>
+                </>
+            } 
         </>
-
     )
 }
 
